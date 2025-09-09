@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>SnakeEngine 测试</title>
+    <style>
+      body { font-family: ui-sans-serif, system-ui, -apple-system; padding: 20px; }
+      .ok { color: #059669; }
+      .fail { color: #dc2626; }
+      code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>SnakeEngine 测试</h1>
+    <ul id="out"></ul>
+    <script type="module">
+      import { SnakeEngine, Directions } from "../src/game/engine.js";
+
+      const out = document.getElementById('out');
+      function log(ok, msg) {
+        const li = document.createElement('li');
+        li.className = ok ? 'ok' : 'fail';
+        li.textContent = (ok ? '✔ ' : '✘ ') + msg;
+        out.appendChild(li);
+      }
+
+      // Deterministic RNG
+      let seq = [0.1, 0.2, 0.3, 0.4];
+      const rng = () => seq[(seq.i = (seq.i || 0) + 1) % seq.length];
+
+      // Test 1: basic movement
+      {
+        const eg = new SnakeEngine({ cols: 10, rows: 10, wrap: false, rng });
+        const s0 = eg._snapshot();
+        eg.tick();
+        const s1 = eg._snapshot();
+        const h0 = s0.snake[s0.snake.length - 1];
+        const h1 = s1.snake[s1.snake.length - 1];
+        log(h1.x === h0.x + 1 && h1.y === h0.y, '向右移动一步');
+      }
+
+      // Test 2: reversal blocked
+      {
+        const eg = new SnakeEngine({ cols: 10, rows: 10, wrap: false, rng });
+        eg.setDirection(Directions.Left); // should be ignored
+        eg.tick();
+        const h = eg._snapshot().snake.at(-1);
+        log(h.x > 0, '禁止反向，仍向右移动');
+      }
+
+      // Test 3: wall collision
+      {
+        const eg = new SnakeEngine({ cols: 4, rows: 4, wrap: false, rng });
+        for (let i = 0; i < 10; i++) eg.tick();
+        log(eg._snapshot().over === true, '撞墙游戏结束');
+      }
+
+      // Test 4: wrap-around
+      {
+        const eg = new SnakeEngine({ cols: 4, rows: 4, wrap: true, rng });
+        for (let i = 0; i < 10; i++) eg.tick();
+        log(eg._snapshot().over === false, '穿墙模式不会结束');
+      }
+
+      // Test 5: eat and grow
+      {
+        const eg = new SnakeEngine({ cols: 6, rows: 6, wrap: false, rng: () => 0 });
+        // place food right ahead of head
+        const st = eg._snapshot();
+        const head = st.snake.at(-1);
+        eg.food = { x: head.x + 1, y: head.y };
+        eg.tick();
+        const st2 = eg._snapshot();
+        log(st2.snake.length === st.snake.length + 1 && st2.score === 1, '吃到食物长度+1分数+1');
+      }
+    </script>
+  </body>
+  </html>
+

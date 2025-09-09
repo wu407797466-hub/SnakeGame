@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>贪吃蛇 Snake</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>贪吃蛇</h1>
+      <div class="controls">
+        <button id="btn-start" title="开始/重来 (空格)">开始</button>
+        <button id="btn-pause" title="暂停/继续 (空格)">暂停</button>
+        <label class="toggle">
+          <input id="wrap-toggle" type="checkbox" />
+          <span>穿墙模式</span>
+        </label>
+        <label class="speed">
+          速度
+          <input id="speed" type="range" min="4" max="20" value="8" />
+        </label>
+        <label class="size">
+          尺寸
+          <select id="size">
+            <option value="16">16×16</option>
+            <option value="20" selected>20×20</option>
+            <option value="24">24×24</option>
+            <option value="32">32×32</option>
+          </select>
+        </label>
+        <span class="score">分数：<strong id="score">0</strong></span>
+        <span class="best">最高分：<strong id="best">0</strong></span>
+        <label class="volume">
+          音量
+          <input id="volume" type="range" min="0" max="100" value="70" />
+        </label>
+        <label class="toggle">
+          <input id="sfx-toggle" type="checkbox" checked />
+          <span>音效</span>
+        </label>
+        <label class="toggle">
+          <input id="vibro-toggle" type="checkbox" checked />
+          <span>震动</span>
+        </label>
+      </div>
+    </header>
+    <main class="board-wrap">
+      <div class="canvas-wrap">
+        <canvas id="board" width="600" height="600"></canvas>
+        <div id="overlay" class="overlay hidden">
+          <div class="dialog">
+            <h2 id="overlay-title">开始游戏</h2>
+            <p id="overlay-desc">按 空格 开始，方向键或 WASD 控制。</p>
+            <button id="overlay-btn">开始</button>
+          </div>
+        </div>
+      </div>
+      <div class="mobile-controls" aria-label="触控方向键">
+        <div class="pad">
+          <button class="btn up" data-dir="up" aria-label="上">↑</button>
+          <button class="btn left" data-dir="left" aria-label="左">←</button>
+          <button class="btn pause" id="btn-mobile-pause" aria-label="开始/暂停">⏯</button>
+          <button class="btn right" data-dir="right" aria-label="右">→</button>
+          <button class="btn down" data-dir="down" aria-label="下">↓</button>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <span>操作：WASD / 方向键 移动，空格 暂停/开始。</span>
+    </footer>
+    <script type="module" src="./game/main.js"></script>
+  </body>
+  </html>
